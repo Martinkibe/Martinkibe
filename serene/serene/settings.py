@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,6 +38,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    
+    # local
+    'auths.apps.AuthsConfig',
+    'events.apps.EventsConfig',
+    
+    # external
+    'tinymce',
+    'allauth',
+    'allauth.account',
 ]
 
 MIDDLEWARE = [
@@ -47,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'serene.urls'
@@ -54,7 +66,7 @@ ROOT_URLCONF = 'serene.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -115,9 +127,141 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "serene", "static", "static-only")
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "serene", "static", "media")
+STATICFILES_DIRS = (os.path.join(os.path.dirname(BASE_DIR), "serene", "static"),)
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+    
+    )
+
+
+SITE_ID = 1
+
+# base url
+BASE_URL = 'http://127.0.0.1:8000/'
+#Allauth settings
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+ACCOUNT_REAUTHENTICATION_ENABLED = True
+ACCOUNT_REAUTHENTICATION_EXPIRY = 3600  # 1 hour in seconds
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECT = True
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
+ACCOUNT_EMAIL_CONFIRMATION_HMAC = True
+ACCOUNT_EMAIL_NOTIFICATIONS = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_CONFIRM_EMAIL_ON_GET = False
+
+ACCOUNT_FORMS = {
+    'signup': 'auths.forms.CustomSignupForm',
+}
+ACCOUNT_RATE_LIMITS = {"change_password": "5/m/user",
+                       "login": "30/m/ip",
+                       "signup": "20/m/ip",
+                       "manage_email": "10/m/user",
+                       "reset_password": "20/m/ip,5/m/key",
+                       "reauthenticate": "20/m/user",
+                       "reset_password_from_key": "20/m/ip",
+                       "login_failed": "10/m/ip,5/5m/key",
+                       "confirm_email": "1/3m/key",
+                    }
+ACCOUNT_REAUTHENTICATION_TIMEOUT = 60 * 10
+ACCOUNT_REAUTHENTICATION_REQUIRED = True
+ACCOUNT_SESSION_REMEMBER = None
+ACCOUNT_USERNAME_BLACKLIST = ["admin", "user", "administrator"]
+ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
+
+ACCOUNT_SIGNUP_PASSWORD_VERIFICATION = True
+ACCOUNT_PRESERVE_USERNAME_CASING = True
+ACCOUNT_USERNAME_MIN_LENGTH = 2
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_USERNAME_VALIDATORS = None
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
+ACCOUNT_USER_MODEL_EMAIL_FIELD = 'email'
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECTED_URL = "/accounts/login/"
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECTED_URL = None
+ACCOUNT_PASSWORD_INPUT_RENDER_VALUE = False
+
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 360,
+    'width': 920,
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 20,
+    'selector': 'textarea',
+    'theme': 'silver',
+    'plugins': '''
+        textcolor save link image media preview codesample contextmenu
+        table code fullscreen  insertdatetime nonbreaking
+        contextmenu directionality searchreplace wordcount visualblocks
+        visualchars code fullscreen autolink lists charmap print hr
+        anchor pagebreak
+        ''',
+    'toolbar': '''
+        formatselect | bold italic strikethrough forecolor backcolor
+        alignleft aligncenter alignright alignjustify |
+        bullist numlist outdent indent | link image media codesample |
+        preview fullscreen | undo redo
+        ''',
+    'menubar': True,
+    'statusbar': True,
+}
+
+# Email configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')
+EMAIL_USE_SSL = False
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'colored',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+    'formatters': {
+        'colored': {
+            '()': 'colorlog.ColoredFormatter',
+            'format': '%(log_color)s%(levelname)s- %(asctime)s - %(name)s : %(message)s',
+            'log_colors': {
+                'DEBUG':    'cyan',
+                'INFO':     'green',
+                'WARNING':  'yellow',
+                'ERROR':    'red',
+                'CRITICAL': 'red,bg_white',
+            },
+        },
+    },
+}
