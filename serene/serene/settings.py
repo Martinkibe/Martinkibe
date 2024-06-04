@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,11 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     
     # local
-    'auths.apps.AuthsConfig',
     'events.apps.EventsConfig',
     
     # external
-    'tinymce',
     'allauth',
     'allauth.account',
 ]
@@ -234,34 +233,34 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')
 EMAIL_USE_SSL = False
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
-            'formatter': 'colored',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-    },
-    'formatters': {
-        'colored': {
-            '()': 'colorlog.ColoredFormatter',
-            'format': '%(log_color)s%(levelname)s- %(asctime)s - %(name)s : %(message)s',
-            'log_colors': {
-                'DEBUG':    'cyan',
-                'INFO':     'green',
-                'WARNING':  'yellow',
-                'ERROR':    'red',
-                'CRITICAL': 'red,bg_white',
-            },
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'level': 'INFO',
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'colored',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+#     'formatters': {
+#         'colored': {
+#             '()': 'colorlog.ColoredFormatter',
+#             'format': '%(log_color)s%(levelname)s- %(asctime)s - %(name)s : %(message)s',
+#             'log_colors': {
+#                 'DEBUG':    'cyan',
+#                 'INFO':     'green',
+#                 'WARNING':  'yellow',
+#                 'ERROR':    'red',
+#                 'CRITICAL': 'red,bg_white',
+#             },
+#         },
+#     },
+# }

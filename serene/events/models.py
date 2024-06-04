@@ -3,8 +3,6 @@ from django.conf import settings
 from django.shortcuts import reverse
 from django.contrib.auth.models import User
 
-from tinymce import HTMLField
-
 
 # Create your models here.
 class Type(models.Model):
@@ -38,7 +36,7 @@ class Category(models.Model):
 
 class Event(models.Model):
     name = models.CharField(max_length=50)
-    details = HTMLField('Details')
+    details = models.TextField('Details')
     venue = models.CharField(max_length=200)
     date = models.DateField(help_text='Please use the following format: <em>YYYY-MM-DD</em>.')
     time = models.TimeField(help_text='Please use the following format: <em>HH:MM:SS<em>')
