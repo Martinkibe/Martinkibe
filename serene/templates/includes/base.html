@@ -104,50 +104,6 @@
 										<li><a class="dropdown-item" href="#">Contact Us</a></li>
 									</ul>
 								</li>
-								<li class="nav-item dropdown">
-									<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-										Pages
-									</a>
-									<ul class="dropdown-menu dropdown-submenu">
-										<li>
-											<a class="dropdown-item submenu-item" href="#">Other Pages</a>
-											<ul class="submenu dropdown-menu">
-												<li><a class="dropdown-item pe-5" href="#">Sign In</a></li>
-												<li><a class="dropdown-item pe-5" href="#">Sign Up</a></li>
-												<li><a class="dropdown-item pe-5" href="#">Forgot Password</a></li>
-												<li><a class="dropdown-item pe-5" href="#">About Us</a></li>
-												<li><a class="dropdown-item pe-5" href="#">Checkout</a></li>
-												<li><a class="dropdown-item pe-5" href="#">Checkout Premium</a></li>
-												<li><a class="dropdown-item pe-5" href="#">Invoice</a></li>
-												<li><a class="dropdown-item pe-5" href="#">Coming Soon</a></li>
-												<li><a class="dropdown-item pe-5" href="#">Error 404</a></li>
-											</ul>
-										</li>
-										<li>
-											<a class="dropdown-item submenu-item" href="#">Create Event</a>
-											<ul class="submenu dropdown-menu">
-												<li><a class="dropdown-item pe-5" href="#">Create</a></li>
-												<li><a class="dropdown-item pe-5" href="#">Create Venue Event</a></li>
-												<li><a class="dropdown-item pe-5" href="#">Create Online Event</a></li>
-											</ul>
-										</li>
-										<li>
-											<a class="dropdown-item submenu-item" href="#">Events View</a>
-											<ul class="submenu dropdown-menu">
-												<li><a class="dropdown-item pe-5" href="#">Online Event Detail View</a></li>
-												<li><a class="dropdown-item pe-5" href="#">Venue Event Detail View</a></li>
-											</ul>
-										</li>
-										<li><a class="dropdown-item" href="#">Booking Confirmed</a></li>
-										<li><a class="dropdown-item" href="#">Attendee Profile View</a></li>
-										<li><a class="dropdown-item" href="#">Organiser Profile View</a></li>
-										<li><a class="dropdown-item" href="#">Organization Dashboard</a></li>
-										<li><a class="dropdown-item" href="#">Sell Tickets Online</a></li>
-										<li><a class="dropdown-item" href="#">Refer a Friend</a></li>
-										<li><a class="dropdown-item" href="#">Terms & Conditions</a></li>
-										<li><a class="dropdown-item" href="#">Privacy Policy</a></li>
-									</ul>
-								</li>
 							</ul>
 						</div>
 						<div class="offcanvas-footer">
@@ -166,7 +122,7 @@
 					<div class="right-header order-2">
 						<ul class="align-self-stretch">
 							<li>
-								<a href="" class="create-btn btn-hover">
+								<a href="#" class="create-btn btn-hover">
 									<i class="fa-solid fa-calendar-days"></i>
 									<span>Create Event</span>
 								</a>
@@ -183,13 +139,18 @@
 												<img src="{% static 'images/profile-imgs/img-13.jpg' %}" alt="">
 											</div>
 											<h5>John Doe</h5>
-											<p>johndoe@example.com</p>
+											<p>martinkibe@gmail.com</p>
 										</div>
 									</li>
 									<li class="profile-link">
 										<a href="#" class="link-item">My Organisation</a>
-										<a href="#" class="link-item">My Profile</a>									
-										<a href="#" class="link-item">Sign Out</a>									
+										<a href="#" class="link-item">My Profile</a>	
+										{% if request.user.is_authenticated %}
+										<a href="{% url account_logout %}" class="link-item">Sign Out</a>
+										{% else %}
+										<a href="{% url account_login %}" class="link-item">Sign In</a>
+										{% endif %}								
+																			
 									</li>
 								</ul>
 							</li>
