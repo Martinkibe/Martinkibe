@@ -1,8 +1,9 @@
 from django.db import models
 from django.conf import settings
-from django.shortcuts import reverse
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
 
 class EventCategory(models.Model):
     name = models.CharField(max_length=100)
@@ -46,24 +47,15 @@ class OnlineEvent(models.Model):
 
 
 class Booking(models.Model):
-    event_type_choices = [
-        ('Venue', 'Venue'),
-        ('Online', 'Online'),
-    ]
-
-    event_type = models.CharField(max_length=10, choices=event_type_choices)
-    event_id = models.PositiveIntegerField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     booking_date = models.DateTimeField(default=timezone.now)
 
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, default=None)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
     class Meta:
-        unique_together = ['event_type', 'event_id']
+        unique_together = ['content_type', 'object_id']
 
     def __str__(self):
-        return f'{self.user.username} booked {self.event_type} event with ID {self.event_id}'
-    
-    
-    
-    
-    
-    
+        return f'{self.user.username} booked {self.content_type} event with ID {self.object_id}'

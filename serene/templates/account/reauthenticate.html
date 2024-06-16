@@ -1,0 +1,21 @@
+{% extends "account/base_reauthenticate.html" %}
+{% load allauth %}
+{% load i18n %}
+
+{% block reauthenticate_content %}
+<div class="reauthenticate">
+    <p>{% blocktranslate %}Enter your password:{% endblocktranslate %}</p>
+    {% url 'account_reauthenticate' as action_url %}
+    <form method="post" action="{{ action_url }}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_password" class="form-label">{% trans "Password" %}</label>
+            {{ form.password }}
+        </div>
+        {{ redirect_field }}
+        <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-primary">{% trans "Confirm" %}</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

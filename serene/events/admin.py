@@ -17,5 +17,5 @@ class OnlineEventAdmin(admin.ModelAdmin):
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ['user', 'event_type', 'event_id', 'booking_date']
-    list_filter = ['event_type']
+    list_display = ['user', 'booking_date', 'object_id', 'booking_date']
+    list_filter = ['booking_date']

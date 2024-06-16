@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     
     # local
+    'auths.apps.AuthsConfig',
     'events.apps.EventsConfig',
     
     # external
@@ -80,7 +81,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'serene.wsgi.application'
 
-
+AUTH_USER_MODEL = 'auths.CustomUser'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -165,9 +166,8 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = False
 
-ACCOUNT_FORMS = {
-    'signup': 'auths.forms.CustomSignupForm',
-}
+ACCOUNT_ADAPTER = 'auths.adapters.OrganizerLoginAdapter'
+
 ACCOUNT_RATE_LIMITS = {"change_password": "5/m/user",
                        "login": "30/m/ip",
                        "signup": "20/m/ip",

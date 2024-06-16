@@ -1,0 +1,145 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, shrink-to-fit=9">
+    <title>{% block head_title %}
+
+        {% endblock head_title %}</title>
+
+    <!-- Favicon Icon -->
+    <link rel="icon" type="image/png" href="{% static 'images/fav.png' %}">
+
+    <!-- Stylesheets -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <link href="{% static 'vendor/unicons-2.0.1/css/unicons.css' %}" rel='stylesheet'>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/responsive.css' %}" rel="stylesheet">
+    <link href="{% static 'css/night-mode.css' %}" rel="stylesheet">
+
+    <!-- Vendor Stylesheets -->
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/OwlCarousel/assets/owl.carousel.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/OwlCarousel/assets/owl.theme.default.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/bootstrap-select/dist/css/bootstrap-select.min.css' %}" rel="stylesheet">
+</head>
+<style>
+    /* Center the messages */
+    .messages {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    /* Style for individual message */
+    .message {
+        margin: 10px;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    /* Additional classes for different message types */
+    .message-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .message-error {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .message-info {
+        background-color: #cce5ff;
+        color: #004085;
+    }
+
+    .message-warning {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+</style>
+
+<body>
+    <div class="form-wrapper">
+        <div class="app-form">
+            <div class="app-form-sidebar">
+                <div class="sidebar-sign-logo">
+                    <img src="{% static 'images/sign-logo.svg' %}" alt="">
+                </div>
+                <div class="sign_sidebar_text">
+                    <h1>The Easiest Way to Create Events and Sell More Tickets Online</h1>
+                </div>
+            </div>
+            <div class="app-form-content">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-10 col-md-10">
+                            <div class="app-top-items">
+                                <a href="#">
+                                    <div class="sign-logo" id="logo">
+                                        <img src="{% static 'images/logo.svg' %}" alt="">
+                                        <img class="logo-inverse" src="{% static 'images/dark-logo.svg' %}" alt="">
+                                    </div>
+                                </a>
+                                <div class="app-top-right-link">
+                                    New to Serene?<a class="sidebar-register-link"
+                                        href="{% url 'account_signup' %}">Sign up</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% if messages %}
+                        <div id="messages" class="messages">
+                            {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">
+                                {{ message }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <div class="col-xl-5 col-lg-6 col-md-7">
+                            <div class="registration">
+                                {% block content %}
+                                {% endblock %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="copyright-footer">
+                    © 2024, Serene. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Auto-dismiss messages after 5 seconds
+        setTimeout(function () {
+            var messagesDiv = document.getElementById('messages');
+            if (messagesDiv) {
+                messagesDiv.style.transition = 'opacity 1s';
+                messagesDiv.style.opacity = '0';
+                setTimeout(function () {
+                    messagesDiv.style.display = 'none';
+                }, 1000);
+            }
+        }, 5000);
+    </script>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'vendor/OwlCarousel/owl.carousel.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+    <script src="{% static 'js/night-mode.js' %}"></script>
+
+</body>
+
+</html>

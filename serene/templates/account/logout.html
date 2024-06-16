@@ -1,0 +1,17 @@
+{% extends "account/base_manage.html" %}
+{% load allauth i18n %}
+{% block head_title %}
+{% trans "Sign Out" %}
+{% endblock head_title %}
+{% block content %}
+<h2 class="registration-title">{% trans "Sign Out" %}</h2>
+<p>{% trans 'Are you sure you want to sign out?' %}</p>
+{% url 'account_logout' as action_url %}
+<form method="post" action="{{ action_url }}">
+    {% csrf_token %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ next_page }}">
+    <button type="submit" class="main-btn btn-hover w-100 mt-4">
+        {% trans 'Sign Out' %}
+    </button>
+</form>
+{% endblock content %}
