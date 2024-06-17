@@ -7,6 +7,8 @@ urlpatterns = [
     path('', views.events, name="events"),
     # all events
     path('all-events/', views.all_events, name="all-events"),
+    # search events url
+    path('search/', views.search_events, name='search_events'),
     #  event Detail
     path('online-event/<int:pk>/', views.online_event, name='online_event_detail'),
     path('venue-event/<int:pk>/', views.venue_event, name='venue_event_detail'),

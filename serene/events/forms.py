@@ -1,5 +1,5 @@
 from django import forms
-from .models import OnlineEvent, VenueEvent
+from .models import OnlineEvent, VenueEvent, EventCategory
 
 class OnlineEventForm(forms.ModelForm):
     class Meta:
@@ -29,3 +29,16 @@ class VenueEventForm(forms.ModelForm):
             'event_time': forms.TimeInput(attrs={'type': 'time'}),
             'event_duration': forms.TextInput(attrs={'placeholder': 'HH:MM:SS'}),
         }
+        
+class EventSearchForm(forms.Form):
+    category = forms.ChoiceField(choices=[], widget=forms.Select(attrs={'class': 'selectpicker', 'data-live-search': 'true'}), required=False)
+    event_type = forms.ChoiceField(choices=[
+        ('browse_all', 'Browse All'),
+        ('online_events', 'Online Events'),
+        ('venue_events', 'Venue Events')],
+        widget=forms.Select(attrs={'class': 'selectpicker'}), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(EventSearchForm, self).__init__(*args, **kwargs)
+        categories = EventCategory.objects.all()
+        self.fields['category'].choices = [('01', 'All Categories')] + [(category.slug, category.name) for category in categories]

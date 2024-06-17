@@ -29,42 +29,36 @@
 						<div class="event-filter-items">
 							<div class="featured-controls">
 								<div class="filter-tag">
-									<a href="explore_events_by_date.html" class="active">All</a>
-									<a href="explore_events_by_date.html">Today</a>
-									<a href="explore_events_by_date.html">Tomorrow</a>
-									<a href="explore_events_by_date.html">This Week</a>
-									<a href="explore_events_by_date.html">This Weekend</a>
-									<a href="explore_events_by_date.html">Next Week</a>
-									<a href="explore_events_by_date.html">Next Weekend</a>
-									<a href="explore_events_by_date.html">This Month</a>
-									<a href="explore_events_by_date.html">Next Month</a>
-									<a href="explore_events_by_date.html">This Year</a>
-									<a href="explore_events_by_date.html">Next Year</a>
+									<a href="#" class="active">All</a>
+									<a href="#">Today</a>
+									<a href="#">Tomorrow</a>
+									<a href="#">This Week</a>
+									<a href="#">This Weekend</a>
+									<a href="#">Next Week</a>
+									<a href="#">Next Weekend</a>
+									<a href="#">This Month</a>
+									<a href="#">Next Month</a>
+									<a href="#">This Year</a>
+									<a href="#">Next Year</a>
 								</div>
 								<div class="controls">
 									<button type="button" class="control" data-filter="all">All</button>
-									<button type="button" class="control" data-filter=".arts">Arts</button>
-									<button type="button" class="control" data-filter=".business">Business</button>
-									<button type="button" class="control" data-filter=".concert">Concert</button>
-									<button type="button" class="control" data-filter=".workshops">Workshops</button>
-									<button type="button" class="control" data-filter=".coaching_consulting">Coaching and Consulting</button>
-									<button type="button" class="control" data-filter=".health_Wellness">Health and Wellbeing</button>									
-									<button type="button" class="control" data-filter=".volunteer">Volunteer</button>
-									<button type="button" class="control" data-filter=".sports">Sports</button>
-									<button type="button" class="control" data-filter=".free">Free</button>	
+									{% for category in categories %}
+									<button type="button" class="control" data-filter=".{{ category.slug }}">{{ category.name }}</button>
+									{% endfor %}
 								</div>
 								<div class="row" data-ref="event-filter-content">
 									{% for event in all_events %}
-									<div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mix {% for category in event_categories %} {{ category }} {% endfor %}" data-ref="mixitup-target">
+									<div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mix {% for category_slug in event.categories.all %}{{ category_slug.slug }} {% endfor %}" data-ref="mixitup-target">
 										<div class="main-card mt-4">
 											<div class="event-thumbnail">
-												<a href="#" class="thumbnail-img">
+												<a href="{% if event.event_type == 'online' %}{% url 'events:online_event_detail' event.id %}{% else %}{% url 'events:venue_event_detail' event.id %}{% endif %}" class="thumbnail-img">
 													<img src="{% static event.event_image.url %}" alt="{{ event.event_name }}">
 												</a>
 												<span class="bookmark-icon" title="Bookmark"></span>
 											</div>
 											<div class="event-content">
-												<a href="#" class="event-title">{{ event.event_name }}</a>
+												<a href="{% if event.event_type == 'online' %}{% url 'events:online_event_detail' event.id %}{% else %}{% url 'events:venue_event_detail' event.id %}{% endif %}" class="event-title">{{ event.event_name }}</a>
 												<div class="duration-price-remaining">
 													<span class="duration-price">Free*</span>
 													<!-- <span class="duration-price">Price: {{event.price}}</span> -->
@@ -86,7 +80,7 @@
 									{% endfor %}
 								</div>
 								<div class="browse-btn">
-									<a href="#" class="main-btn btn-hover ">Browse All</a>
+									<a href="{% url 'events:all-events' %}" class="main-btn btn-hover ">Browse All</a>
 								</div>
 							</div>
 						</div>

@@ -1,4 +1,4 @@
-﻿{% extends 'includes/base.html' %}
+{% extends 'includes/base.html' %}
 {% load static %}
 {% load custom_filters %}
 {% block content %}
@@ -7,7 +7,7 @@
 		<div class="row justify-content-center">
 			<div class="col-xl-8 col-lg-8 col-md-10">
 				<div class="hero-banner-content">
-					<h2>Discover Events For All The Things You Love</h2>
+					<h2>Search Again:</h2>
 					<form method="get" action="{% url 'events:search_events' %}" class="search-form main-form">
 						<div class="row g-3">
 							<div class="col-lg-5 col-md-12">
@@ -56,7 +56,7 @@
 							{% endfor %}
 						</div>
 						<div class="row" data-ref="event-filter-content">
-							{% for event in all_events %}
+							{% for event in events %}
 							<div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mix {% for category_slug in event.categories.all %}{{ category_slug.slug }} {% endfor %}" data-ref="mixitup-target">
 								<div class="main-card mt-4">
 									<div class="event-thumbnail">
@@ -78,7 +78,7 @@
 									<div class="event-footer">
 										<div class="event-timing">
 											<div class="publish-date">
-												<span><i class="fa-solid fa-calendar-day me-2"></i>{{ event.event_date |date:"D, M d" }}</span>
+												<span><i class="fa-solid fa-calendar-day me-2"></i>{{ event.event_date|date:"D, M d" }}</span>
 												<span class="dot"><i class="fa-solid fa-circle"></i></span>
 												<span>{{ event.event_time }}</span>
 											</div>
@@ -88,9 +88,6 @@
 								</div>
 							</div>
 							{% endfor %}
-						</div>
-						<div class="browse-btn">
-							<a href="#" class="main-btn btn-hover ">See More</a>
 						</div>
 					</div>
 				</div>

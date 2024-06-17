@@ -17,3 +17,7 @@ def format_duration(value):
 @register.filter
 def instanceof(obj, class_name):
     return obj.__class__.__name__ == class_name
+
+@register.filter(name='add_class')
+def add_class(field, css_class):
+    return field.as_widget(attrs={"class": css_class})

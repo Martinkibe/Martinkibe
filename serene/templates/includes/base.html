@@ -119,34 +119,14 @@
                                 </div>
 							</div>
 							{% endif %}
-							<ul class="navbar-nav justify-content-end flex-grow-1 pe_5">
+							<ul class="navbar-nav justify-content-end flex-grow-1 pe-5">
 								<li class="nav-item">
-									<a class="nav-link active" aria-current="page" href="#">Home</a>
+									<a class="nav-link {% if request.path == home_url %}active{% endif %}" aria-current="page" href="{% url 'events:events' %}">Home</a>
 								</li>
-								<li class="nav-item dropdown">
-									<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-										aria-expanded="false">
+								<li class="nav-item">
+									<a class="nav-link {% if request.path == explore_url %}active{% endif %}" href="{% url 'events:all-events' %}" role="button" aria-expanded="false">
 										Explore Events
 									</a>
-									<ul class="dropdown-menu dropdown-submenu">
-										<li><a class="dropdown-item" href="{% url 'events:all-events' %}">Explore Events</a></li>
-										<li><a class="dropdown-item" href="#">Venue Event Detail View</a></li>
-										<li><a class="dropdown-item" href="#">Online Event Detail View</a></li>
-									</ul>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link" href="">Pricing</a>
-								</li>
-								<li class="nav-item dropdown">
-									<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-										aria-expanded="false">
-										Help
-									</a>
-									<ul class="dropdown-menu dropdown-submenu">
-										<li><a class="dropdown-item" href="#">FAQ</a></li>
-										<li><a class="dropdown-item" href="#">Help Center</a></li>
-										<li><a class="dropdown-item" href="#">Contact Us</a></li>
-									</ul>
 								</li>
 							</ul>
 						</div>
@@ -186,11 +166,11 @@
 											<div class="account-holder-avatar">
 												<img src="{% static 'images/profile-imgs/img-13.jpg' %}" alt="">
 											</div>
-											<p>martinkibe@gmail.com</p>
+											<p>{{request.user.email|capfirst}}</p>
 										</div>
 									</li>
 									<li class="profile-link">
-										<a href="#" class="link-item">My Organisation</a>
+										<a href="{% url 'organizer_dashboard' %}" class="link-item">My Organisation</a>
 										<a href="#" class="link-item">My Profile</a>
 										{% if request.user.is_authenticated %}
 										<a href="{% url 'account_logout' %}" class="link-item">Sign Out</a>
