@@ -13,69 +13,161 @@
                 <div class="create-block">
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
+                        {{ form.non_field_errors }}
                         <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="event_name">Event Name</label>
-                                    <input type="text" class="form-control" id="event_name" name="event_name" value="{{ form.event_name.value|default_if_none:'' }}" required>
+                            <div class="row">
+                                <!-- Event Name -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="event_name">Event Name</label>
+                                        <input type="text" class="form-control{% if form.event_name.errors %} is-invalid{% endif %}" id="event_name" name="event_name" value="{{ form.event_name.value|default_if_none:'' }}" required>
+                                        {% for error in form.event_name.errors %}
+                                            <div class="invalid-feedback">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <!-- Event Image -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="event_image">Event Image</label>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input{% if form.event_image.errors %} is-invalid{% endif %}" id="event_image" name="event_image">
+                                            {% for error in form.event_image.errors %}
+                                                <div class="invalid-feedback">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="event_description">Event Description</label>
-                                    <textarea class="form-control" id="event_description" name="event_description" required>{{ form.event_description.value|default_if_none:'' }}</textarea>
+                                    <textarea
+                                        class="form-control{% if form.event_description.errors %} is-invalid{% endif %}"
+                                        id="event_description" name="event_description"
+                                        required>{{ form.event_description.value|default_if_none:'' }}</textarea>
+                                    {% for error in form.event_description.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="event_date">Event Date</label>
-                                    <input type="date" class="form-control" id="event_date" name="event_date" value="{{ form.event_date.value|default_if_none:'' }}" required>
+                                    <input type="date"
+                                        class="form-control{% if form.event_date.errors %} is-invalid{% endif %}"
+                                        id="event_date" name="event_date"
+                                        value="{{ form.event_date.value|default_if_none:'' }}" required>
+                                        <small class="form-text text-muted">{{ form.event_date.help_text }}</small>
+                                    {% for error in form.event_date.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="event_time">Event Time</label>
-                                    <input type="time" class="form-control" id="event_time" name="event_time" value="{{ form.event_time.value|default_if_none:'' }}" required>
+                                    <input type="time"
+                                        class="form-control{% if form.event_time.errors %} is-invalid{% endif %}"
+                                        id="event_time" name="event_time"
+                                        value="{{ form.event_time.value|default_if_none:'' }}" required>
+                                    {% for error in form.event_time.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="event_duration">Event Duration</label>
-                                    <input type="text" class="form-control" id="event_duration" name="event_duration" value="{{ form.event_duration.value|default_if_none:'' }}" required>
+                                    <input type="text" class="form-control" id="event_duration" name="event_duration"
+                                        value="{{ form.event_duration.value|default_if_none:'' }}" required
+                                        pattern="\d{2}:\d{2}" title="Please enter a duration in the format HH:MM">
+                                    {% for error in form.event_duration.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="organizer_name">Organizer Name</label>
-                                    <input type="text" class="form-control" id="organizer_name" name="organizer_name" value="{{ form.organizer_name.value|default_if_none:'' }}" required>
+                                    <input type="text"
+                                        class="form-control{% if form.organizer_name.errors %} is-invalid{% endif %}"
+                                        id="organizer_name" name="organizer_name"
+                                        value="{{ form.organizer_name.value|default_if_none:'' }}" required>
+                                    {% for error in form.organizer_name.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="organizer_email">Organizer Email</label>
-                                    <input type="email" class="form-control" id="organizer_email" name="organizer_email" value="{{ form.organizer_email.value|default_if_none:'' }}" required>
+                                    <input type="email"
+                                        class="form-control{% if form.organizer_email.errors %} is-invalid{% endif %}"
+                                        id="organizer_email" name="organizer_email"
+                                        value="{{ form.organizer_email.value|default_if_none:'' }}" required>
+                                    {% for error in form.organizer_email.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="organizer_phone">Organizer Phone</label>
-                                    <input type="text" class="form-control" id="organizer_phone" name="organizer_phone" value="{{ form.organizer_phone.value|default_if_none:'' }}" required>
+                                    <input type="text"
+                                        class="form-control{% if form.organizer_phone.errors %} is-invalid{% endif %}"
+                                        id="organizer_phone" name="organizer_phone"
+                                        value="{{ form.organizer_phone.value|default_if_none:'' }}" required>
+                                    {% for error in form.organizer_phone.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="event_url">Event URL</label>
-                                    <input type="url" class="form-control" id="event_url" name="event_url" value="{{ form.event_url.value|default_if_none:'' }}" required>
+                                    <input type="url"
+                                        class="form-control{% if form.event_url.errors %} is-invalid{% endif %}"
+                                        id="event_url" name="event_url"
+                                        value="{{ form.event_url.value|default_if_none:'' }}" required>
+                                    {% for error in form.event_url.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                    {% endfor %}
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <button type="submit" class="main-btn btn-hover h_40 w-100">Create Event</button>
-                            </div>
                         </div>
+                        <button type="submit" class="btn btn-primary">Create Event</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var currentDate = new Date();
+        currentDate.setDate(currentDate.getDate() + 2); // Add 1 day to get the next day
+        var minDate = currentDate.toISOString().split('T')[0]; // Format as yyyy-mm-dd
+        document.getElementById('event_date').min = minDate;
+
+        var eventDurationInput = document.getElementById('event_duration');
+        var eventDurationMask = new IMask(eventDurationInput, {
+            mask: 'HH:MM',
+            blocks: {
+                HH: {
+                    mask: IMask.MaskedRange,
+                    from: 0,
+                    to: 23,
+                    maxLength: 2
+                },
+                MM: {
+                    mask: IMask.MaskedRange,
+                    from: 0,
+                    to: 59,
+                    maxLength: 2
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}

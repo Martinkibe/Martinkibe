@@ -16,7 +16,7 @@ class VenueEvent(models.Model):
     event_name = models.CharField(max_length=200)
     categories = models.ManyToManyField(EventCategory)
     event_description = models.TextField()
-    event_date = models.DateField()
+    event_date = models.DateTimeField()
     event_time = models.TimeField()
     event_duration = models.DurationField()
     organizer_name = models.CharField(max_length=100)
@@ -25,25 +25,35 @@ class VenueEvent(models.Model):
     event_location = models.CharField(max_length=200)
     venue_name = models.CharField(max_length=200)
     venue_address = models.TextField()
+    event_image = models.ImageField(upload_to='event_images/', blank=True, null=True)
 
     def __str__(self):
         return self.event_name
+    
+    @property
+    def event_type(self):
+        return "venue"
 
 
 class OnlineEvent(models.Model):
     event_name = models.CharField(max_length=200)
     categories = models.ManyToManyField(EventCategory)
     event_description = models.TextField()
-    event_date = models.DateField()
+    event_date = models.DateTimeField()
     event_time = models.TimeField()
     event_duration = models.DurationField()
     organizer_name = models.CharField(max_length=100)
     organizer_email = models.EmailField()
     organizer_phone = models.CharField(max_length=15)
     event_url = models.URLField()
+    event_image = models.ImageField(upload_to='event_images/', blank=True, null=True)
 
     def __str__(self):
         return self.event_name
+    
+    @property
+    def event_type(self):
+        return "online"
 
 
 class Booking(models.Model):
@@ -59,3 +69,5 @@ class Booking(models.Model):
 
     def __str__(self):
         return f'{self.user.username} booked {self.content_type} event with ID {self.object_id}'
+    
+    
