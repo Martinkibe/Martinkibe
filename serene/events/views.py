@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import OnlineEventForm, VenueEventForm, EventSearchForm
+from .forms import OnlineEventForm, VenueEventForm, EventSearchForm, TicketForm
 from .models import Booking, VenueEvent, OnlineEvent, EventCategory
 from .threads import set_current_request
 from django.contrib.auth.decorators import user_passes_test
@@ -101,18 +101,31 @@ def search_events(request):
 
 def create(request):
     return render(request, 'create.html')
+
+
 @login_required
 @user_passes_test(is_organizer)
 def create_online_event(request):
     if request.method == 'POST':
-        form = OnlineEventForm(request.POST, request.FILES)
-        if form.is_valid():
+        event_form = OnlineEventForm(request.POST, request.FILES)
+        ticket_form = TicketForm(request.POST)
+        if event_form.is_valid() and ticket_form.is_valid():
             set_current_request(request)
-            form.save()
-            return redirect('events:events')  # Update the redirection as needed
+            event = event_form.save()
+            ticket = ticket_form.save(commit=False)
+            ticket.event = event
+            if ticket.quantity + ticket.sold_quantity <= ticket.quantity:
+                ticket.sold_quantity += ticket.quantity
+                ticket.save()
+                return redirect('event_detail', pk=event.pk)
+            else:
+                ticket_form.add_error('quantity', 'Not enough tickets available')
+            return redirect('events:events')
     else:
         form = OnlineEventForm()
-    return render(request, 'create_online_event.html', {'form': form})
+        ticket_form = TicketForm()
+    return render(request, 'template.html', {'form': form, 'ticket_form': ticket_form})
+
 
 @login_required
 @user_passes_test(is_organizer)

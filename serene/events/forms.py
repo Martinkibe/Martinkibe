@@ -1,10 +1,10 @@
 from django import forms
-from .models import OnlineEvent, VenueEvent, EventCategory
+from .models import OnlineEvent, VenueEvent, EventCategory, Ticket
 
 class OnlineEventForm(forms.ModelForm):
     class Meta:
         model = OnlineEvent
-        fields = ['event_name', 'event_description', 'event_date', 'event_time', 'event_duration', 'organizer_name', 'organizer_email', 'organizer_phone', 'event_url', 'event_image']
+        fields = ['event_name', 'categories', 'event_description', 'event_date', 'event_time', 'event_duration', 'organizer_name', 'organizer_email', 'organizer_phone', 'event_url', 'event_image']
         widgets = {
             'event_date': forms.DateInput(attrs={'type': 'date'}),
             'event_time': forms.TimeInput(attrs={'type': 'time'}),
@@ -42,3 +42,39 @@ class EventSearchForm(forms.Form):
         super(EventSearchForm, self).__init__(*args, **kwargs)
         categories = EventCategory.objects.all()
         self.fields['category'].choices = [('01', 'All Categories')] + [(category.slug, category.name) for category in categories]
+        
+
+
+class TicketForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ['price', 'quantity', 'free', 'early_bird', 'early_bird_discount', 'discount_end_date', 'discount_end_time']
+
+    def clean_quantity(self):
+        quantity = self.cleaned_data.get('quantity')
+        if quantity < 0:
+            raise forms.ValidationError("Quantity cannot be negative")
+        if self.instance.pk:  # Check if it's an existing instance
+            available_quantity = self.instance.quantity - self.instance.sold_quantity
+            if quantity > available_quantity:
+                raise forms.ValidationError("Not enough tickets available")
+        return quantity
+
+    def clean(self):
+        cleaned_data = super().clean()
+        early_bird = cleaned_data.get("early_bird")
+        early_bird_discount = cleaned_data.get("early_bird_discount")
+        discount_end_date = cleaned_data.get("discount_end_date")
+        discount_end_time = cleaned_data.get("discount_end_time")
+
+        if early_bird and not early_bird_discount:
+            self.add_error('early_bird_discount', "Early bird discount must be provided if 'early bird' is checked.")
+
+        if early_bird and not discount_end_date:
+            self.add_error('discount_end_date', "Discount end date must be provided if 'early bird' is checked.")
+
+        if early_bird and not discount_end_time:
+            self.add_error('discount_end_time', "Discount end time must be provided if 'early bird' is checked.")
+
+        return cleaned_data
+        

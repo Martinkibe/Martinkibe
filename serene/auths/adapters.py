@@ -6,6 +6,6 @@ class OrganizerLoginAdapter(DefaultAccountAdapter):
     def get_login_redirect_url(self, request):
         user = request.user
         if user.is_organizer:
-            return reverse('organizer_dashboard')
+            return reverse('events:events')
         else:
             return reverse('events:events')  # Redirect non-organizer users to the home page

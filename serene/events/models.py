@@ -63,6 +63,19 @@ class OnlineEvent(models.Model):
         return "online"
 
 
+class Ticket(models.Model):
+    event = models.ForeignKey('OnlineEvent', on_delete=models.CASCADE, related_name='tickets')
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.PositiveIntegerField()
+    sold_quantity = models.PositiveIntegerField(default=0)
+    free = models.BooleanField(default=False)
+    early_bird = models.BooleanField(default=False)
+    early_bird_discount = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    discount_end_date = models.DateField(null=True, blank=True)
+    discount_end_time = models.TimeField(null=True, blank=True)
+
+
+
 class Booking(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     booking_date = models.DateTimeField(default=timezone.now)
