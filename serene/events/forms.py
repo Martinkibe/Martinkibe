@@ -48,7 +48,7 @@ class EventSearchForm(forms.Form):
 class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
-        fields = ['price', 'quantity', 'free', 'early_bird', 'early_bird_discount', 'discount_end_date', 'discount_end_time']
+        fields = ['price', 'quantity', 'free']
 
     def clean_quantity(self):
         quantity = self.cleaned_data.get('quantity')
@@ -60,21 +60,14 @@ class TicketForm(forms.ModelForm):
                 raise forms.ValidationError("Not enough tickets available")
         return quantity
 
-    def clean(self):
-        cleaned_data = super().clean()
-        early_bird = cleaned_data.get("early_bird")
-        early_bird_discount = cleaned_data.get("early_bird_discount")
-        discount_end_date = cleaned_data.get("discount_end_date")
-        discount_end_time = cleaned_data.get("discount_end_time")
+class TicketForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ['price', 'quantity', 'free']
 
-        if early_bird and not early_bird_discount:
-            self.add_error('early_bird_discount', "Early bird discount must be provided if 'early bird' is checked.")
-
-        if early_bird and not discount_end_date:
-            self.add_error('discount_end_date', "Discount end date must be provided if 'early bird' is checked.")
-
-        if early_bird and not discount_end_time:
-            self.add_error('discount_end_time', "Discount end time must be provided if 'early bird' is checked.")
-
-        return cleaned_data
+    def __init__(self, *args, **kwargs):
+        super(TicketForm, self).__init__(*args, **kwargs)
+        self.fields['price'].initial = 0
+        self.fields['quantity'].initial = 5
+        self.fields['free'].initial = False
         

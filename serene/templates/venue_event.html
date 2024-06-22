@@ -65,7 +65,7 @@
                         <h4>Event Details</h4>
                     </div>
                     <div class="time-left">
-                        <div class="countdown">
+                        <div class="countdown" id="countdown">
                             <div class="countdown-item">
                                 <span id="day"></span>days
                             </div>
@@ -220,7 +220,7 @@
                 clearInterval(x);
                 document.getElementById("countdown").innerHTML = "Event has started.";
             }
-        }, 1000); // Update every 1 
+        }, 1000); // Update every 1 second
     });
 </script>
 

@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from .forms import OnlineEventForm, VenueEventForm, EventSearchForm, TicketForm
 from .models import Booking, VenueEvent, OnlineEvent, EventCategory
 from .threads import set_current_request
@@ -110,39 +111,40 @@ def create_online_event(request):
         event_form = OnlineEventForm(request.POST, request.FILES)
         ticket_form = TicketForm(request.POST)
         if event_form.is_valid() and ticket_form.is_valid():
-            set_current_request(request)
             event = event_form.save()
             ticket = ticket_form.save(commit=False)
-            ticket.event = event
-            if ticket.quantity + ticket.sold_quantity <= ticket.quantity:
-                ticket.sold_quantity += ticket.quantity
-                ticket.save()
-                return redirect('event_detail', pk=event.pk)
-            else:
-                ticket_form.add_error('quantity', 'Not enough tickets available')
-            return redirect('events:events')
+            ticket.content_type = ContentType.objects.get_for_model(event)
+            ticket.object_id = event.id
+            if request.POST.get('free_event_ticketing'):
+                ticket.price = 0
+                ticket.free = True
+            ticket.save()
+            return redirect('events:online_event', pk=event.pk)
     else:
         form = OnlineEventForm()
         ticket_form = TicketForm()
     return render(request, 'template.html', {'form': form, 'ticket_form': ticket_form})
 
-
 @login_required
 @user_passes_test(is_organizer)
 def create_venue_event(request):
     if request.method == 'POST':
-        form = VenueEventForm(request.POST, request.FILES)
-        if form.is_valid():
-            set_current_request(request)
-            form.save()
-            return redirect('events:events')  # Update the redirection as needed
+        event_form = VenueEventForm(request.POST, request.FILES)
+        ticket_form = TicketForm(request.POST)
+        if event_form.is_valid() and ticket_form.is_valid():
+            event = event_form.save()
+            ticket = ticket_form.save(commit=False)
+            ticket.content_type = ContentType.objects.get_for_model(event)
+            ticket.object_id = event.id
+            if request.POST.get('free_event_ticketing'):
+                ticket.price = 0
+                ticket.free = True
+            ticket.save()
+            return redirect('events:venue_event', pk=event.pk)
     else:
         form = VenueEventForm()
-    return render(request, 'create_venue_event.html', {'form': form})
-
-# def booking_confirmed(request, event_id):
-#     event = get_object_or_404(Event, id=event_id)
-#     return render(request, 'booking_confirmed.html', {'event': event})
+        ticket_form = TicketForm()
+    return render(request, 'template.html', {'form': form, 'ticket_form': ticket_form})
 
 def booking_confirmed(request, event_id, event_type):
     if event_type == 'Venue':

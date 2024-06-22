@@ -6,8 +6,6 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, shrink-to-fit=9">
-		<meta name="description" content="Gambolthemes">
-		<meta name="author" content="Gambolthemes">		
 		<title>Serene</title>
 		
 		<!-- Favicon Icon -->
@@ -221,15 +219,15 @@
 												<div class="p-4 bp-form main-form">
 													<div class="row">
 														<div class="col-lg-12 col-md-12">
-                                                            <form method="post" enctype="multipart/form-data"></form>
-                                                            {% csrf_token %}
-                                                            {{ form.non_field_errors }}
+                                                            <form method="post" enctype="multipart/form-data">
+                                                            	{% csrf_token %}
+                                                            	{{ form.non_field_errors }}
                                                                 <div class="form-group border_bottom pb_30">
                                                                     <label class="form-label fs-16">Give your event a name.*</label>
                                                                     <p class="mt-2 d-block fs-14 mb-3">See how your name appears on the event page and a list of all places where your event name will be used. <a href="#" class="a-link">Learn more</a></p>
                                                                     <input class="form-control{% if form.event_name.errors %} is-invalid{% endif %}" id="event_name" name="event_name" type="text" placeholder="Enter event name here" value="">
                                                                     {% for error in form.event_name.errors %}
-                                                                        <div class="invalid-feedback">{{ error }}</div>
+                                                                        <div id="event_name_error" class="invalid-feedback">{{ error }}</div>
                                                                     {% endfor %}
                                                                 </div>
                                                                 <div class="form-group border_bottom pt_30 pb_30">
@@ -245,9 +243,7 @@
                                                                             </option>
                                                                         {% endfor %}
                                                                     </select>
-                                                                    {% for error in form.categories.errors %}
-                                                                        <div class="invalid-feedback">{{ error }}</div>
-                                                                    {% endfor %}
+                                                                    <div id="categories_error" class="invalid-feedback"></div>
                                                                 </div>
                                                                 <div class="form-group border_bottom pt_30 pb_30">
                                                                     <label class="form-label fs-16">When is your event?*</label>
@@ -258,7 +254,7 @@
                                                                             <div class="loc-group position-relative">
                                                                                 <input type="date" class="form-control{% if form.event_date.errors %} is-invalid{% endif %}" id="event_date" name="event_date" data-language="en" placeholder="MM/DD/YYYY" value="">
                                                                                 {% for error in form.event_date.errors %}
-                                                                                    <div class="invalid-feedback">{{ error }}</div>
+                                                                                    <div id="event_date_error" class="invalid-feedback">{{ error }}</div>
                                                                                 {% endfor %}
                                                                             </div>
                                                                         </div>
@@ -269,7 +265,7 @@
                                                                                         <label class="form-label mt-3 fs-6">Time</label>	
                                                                                         <input type="time" class="form-control{% if form.event_time.errors %} is-invalid{% endif %}" id="event_time" name="event_time" value="{{ form.event_time.value|default_if_none:'' }}" required>
                                                                                         {% for error in form.event_time.errors %}
-                                                                                            <div class="invalid-feedback">{{ error }}</div>
+                                                                                            <div id="event_time_error" class="invalid-feedback">{{ error }}</div>
                                                                                         {% endfor %}
                                                                                     </div>
                                                                                 </div>
@@ -279,7 +275,7 @@
                                                                                         value="{{ form.event_duration.value|default_if_none:'' }}" required
                                                                                         pattern="\d{2}:\d{2}" title="Please enter a duration in the format HH:MM">
                                                                                     {% for error in form.event_duration.errors %}
-                                                                                    <div class="invalid-feedback">{{ error }}</div>
+                                                                                    <div id="event_duration_error" class="invalid-feedback">{{ error }}</div>
                                                                                     {% endfor %}
                                                                                 </div>
                                                                             </div>
@@ -326,7 +322,7 @@
                                                                                 id="organizer_name" name="organizer_name"
                                                                                 value="{{ form.organizer_name.value|default_if_none:'' }}" required>
                                                                                 {% for error in form.organizer_name.errors %}
-                                                                                    <div class="invalid-feedback">{{ error }}</div>
+                                                                                    <div id="organizer_name_error" class="invalid-feedback">{{ error }}</div>
                                                                                 {% endfor %}
                                                                             </div>
                                                                         </div>
@@ -339,7 +335,7 @@
                                                                                         id="organizer_email" name="organizer_email"
                                                                                         value="{{ form.organizer_email.value|default_if_none:'' }}" required>
                                                                                         {% for error in form.organizer_email.errors %}
-                                                                                            <div class="invalid-feedback">{{ error }}</div>
+                                                                                            <div id="organizer_email_error" class="invalid-feedback">{{ error }}</div>
                                                                                         {% endfor %}
                                                                                     </div>
                                                                                 </div>
@@ -350,7 +346,7 @@
                                                                                     id="organizer_phone" name="organizer_phone"
                                                                                     value="{{ form.organizer_phone.value|default_if_none:'' }}" required>
                                                                                     {% for error in form.organizer_phone.errors %}
-                                                                                    <div class="invalid-feedback">{{ error }}</div>
+                                                                                    <div id="organizer_phone_error" class="invalid-feedback">{{ error }}</div>
                                                                                     {% endfor %}
                                                                                 </div>
                                                                             </div>
@@ -365,7 +361,7 @@
                                                                     id="event_url" name="event_url"
                                                                     value="{{ form.event_url.value|default_if_none:'' }}" placeholder="Enter event URL here" required>
                                                                     {% for error in form.event_name.errors %}
-                                                                        <div class="invalid-feedback">{{ error }}</div>
+                                                                        <div id="event_url_error" class="invalid-feedback">{{ error }}</div>
                                                                     {% endfor %}
                                                                 </div>
                                                             </form>
@@ -383,19 +379,24 @@
 													<h4><i class="fa-solid fa-ticket step_icon me-3"></i>Tickets</h4>
 												</div>
 												<div class="p-4 bp-form main-form">
+												<form method="post">
+													{% csrf_token %}
 													<div class="form-group border_bottom pb_30">
 														<div class="ticket-section">
 															<label class="form-label fs-16">Let's create tickets!</label>
-															<p class="mt-2 fs-14 d-block mb-3 pe_right">Add the ticket price and the number of your attendees. For free events, keep the price at $0.</p>
+															<p class="mt-2 fs-14 d-block mb-3 pe_right">Add the ticket price and the number of your attendees. For free events, Check the Free Ticket Button.</p>
 															<div class="content-holder">
 																<div class="row g-3">
 																	<div class="col-md-6 disabled-action">
 																		<label class="form-label mt-3 fs-6">Price*</label>
 																		<div class="loc-group position-relative input-group">
-																			<input class="form-control h_50" type="text" placeholder="" name="price" value="{{ ticket_form.price.value }}">
+																			<input class="form-control{% if ticket_form.ticket_price.errors %} is-invalid{% endif %}" id="ticket_price" name="ticket_price" type="number" step="0.01" placeholder="Enter ticket price" value="{{ ticket_form.ticket_price.value|default_if_none:'' }}">
+																			{% for error in ticket_form.ticket_price.errors %}
+																				<div class="invalid-feedback">{{ error }}</div>
+																			{% endfor %}
 																			<div class="pp-select">
 																				<select class="selectpicker dropdown-no-bg">
-																					<option value="AUD" selected="selected">KES</option>
+																					<option value="Kes" selected="selected">KES</option>
 																				</select>
 																			</div>
 																		</div>
@@ -403,7 +404,10 @@
 																	<div class="col-md-6">
 																		<label class="form-label mt-3 fs-6">Total number of tickets available*</label>
 																		<div class="input-number">
-																			<input class="form-control h_50" type="number" placeholder="How many Tickets Are You Selling?" name="quantity" value="{{ ticket_form.quantity.value }}">
+																			<input class="form-control{% if ticket_form.ticket_quantity.errors %} is-invalid{% endif %}" id="ticket_quantity" name="ticket_quantity" type="number" placeholder="Enter ticket quantity" value="{{ ticket_form.ticket_quantity.value|default_if_none:'' }}">
+																			{% for error in ticket_form.ticket_quantity.errors %}
+																				<div class="invalid-feedback">{{ error }}</div>
+																			{% endfor %}
 																		</div>
 																	</div>
 																</div>
@@ -414,7 +418,7 @@
 																<div class="form-group">
 																	<div class="d-flex align-items-start">
 																		<label class="btn-switch m-0 me-3">
-																			<input type="checkbox" class="" id="free-event-ticketing" value="">
+																			<input type="checkbox" name="free_event_ticketing" id="free-event-ticketing" value="">
 																			<span class="checkbox-slider"></span>
 																		</label>
 																		<div class="d-flex flex-column">
@@ -425,51 +429,8 @@
 															</div>
 														</div>
 													</div>
-													<div class="stepper-data-set pt_30 disabled-action">
-														<div class="content-holder">
-															<div class="form-group">
-																<div class="d-flex align-items-start">
-																	<label class="btn-switch m-0 me-3">
-																		<input type="checkbox" class="" id="bird-discount" value="">
-																		<span class="checkbox-slider"></span>
-																	</label>
-																	<div class="d-flex flex-column">
-																		<label class="color-black mb-1">I want to offer early bird discount.</label>
-																		<p class="mt-2 fs-14 d-block mb-3">Enabling this discount lets your attendees get all the regular tickets features at a discounted price. <a href="#" class="a-link">Learn more</a></p>
-																	</div>
-																</div>
-																<div class="online-event-discount-wrapper" style="display: none;">
-																	<div class="row g-3">
-																		<div class="col-md-3">
-																			<label class="form-label mt-3 fs-6">Discount*</label>
-																			<input class="form-control h_50" type="text" placeholder="0" value="">
-																		</div>
-																		<div class="col-md-3">
-																			<label class="form-label mt-3 fs-6">Price*</label>
-																			<select class="selectpicker">
-																				<option value="Percentage" selected="">Percent(%)</option>
-																				<option value="Fixed">Fixed($)</option>
-																			</select>
-																		</div>
-																		<div class="col-md-3">
-																			<label class="form-label mt-3 fs-6">Discount ends on*</label>
-																			<div class="loc-group position-relative">
-																				<input class="form-control h_50 datepicker-here" data-language="en" type="text" placeholder="MM/DD/YYYY" value="">
-																				<span class="absolute-icon"><i class="fa-solid fa-calendar-days"></i></span>
-																			</div>
-																		</div>
-																		<div class="col-md-3">
-																			<div class="clock-icon">
-																				<label class="form-label mt-3 fs-6">Time</label>	
-																				
-																			</div>
-																		</div>
-																	</div>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
+												</form>
+											</div>
 											</div>
 										</div>
 									</div>
@@ -477,7 +438,7 @@
 										<div class="tab-from-content">											
 											<div class="main-card">
 												<div class="bp-title">
-													<h4><i class="fa-solid fa-gear step_icon me-3"></i>Setting</h4>
+													<h4><i class="fa-solid fa-gear step_icon me-3"></i>Settings</h4>
 												</div>
 												<div class="p_30 bp-form main-form">
 													<div class="form-group">
@@ -511,104 +472,7 @@
 																				<div class="col-md-6">																		
 																					<div class="clock-icon">
 																						<label class="form-label mt-3 fs-6">Time</label>	
-																						<select class="selectpicker" data-size="5" data-live-search="true">
-																							<option value="00:00">12:00 AM</option>
-																							<option value="00:15">12:15 AM</option>
-																							<option value="00:30">12:30 AM</option>
-																							<option value="00:45">12:45 AM</option>
-																							<option value="01:00">01:00 AM</option>
-																							<option value="01:15">01:15 AM</option>
-																							<option value="01:30">01:30 AM</option>
-																							<option value="01:45">01:45 AM</option>
-																							<option value="02:00">02:00 AM</option>
-																							<option value="02:15">02:15 AM</option>
-																							<option value="02:30">02:30 AM</option>
-																							<option value="02:45">02:45 AM</option>
-																							<option value="03:00">03:00 AM</option>
-																							<option value="03:15">03:15 AM</option>
-																							<option value="03:30">03:30 AM</option>
-																							<option value="03:45">03:45 AM</option>
-																							<option value="04:00">04:00 AM</option>
-																							<option value="04:15">04:15 AM</option>
-																							<option value="04:30">04:30 AM</option>
-																							<option value="04:45">04:45 AM</option>
-																							<option value="05:00">05:00 AM</option>
-																							<option value="05:15">05:15 AM</option>
-																							<option value="05:30">05:30 AM</option>
-																							<option value="05:45">05:45 AM</option>
-																							<option value="06:00">06:00 AM</option>
-																							<option value="06:15">06:15 AM</option>
-																							<option value="06:30">06:30 AM</option>
-																							<option value="06:45">06:45 AM</option>
-																							<option value="07:00">07:00 AM</option>
-																							<option value="07:15">07:15 AM</option>
-																							<option value="07:30">07:30 AM</option>
-																							<option value="07:45">07:45 AM</option>
-																							<option value="08:00">08:00 AM</option>
-																							<option value="08:15">08:15 AM</option>
-																							<option value="08:30">08:30 AM</option>
-																							<option value="08:45">08:45 AM</option>
-																							<option value="09:00">09:00 AM</option>
-																							<option value="09:15">09:15 AM</option>
-																							<option value="09:30">09:30 AM</option>
-																							<option value="09:45">09:45 AM</option>
-																							<option value="10:00" selected="selected">10:00 AM</option>
-																							<option value="10:15">10:15 AM</option>
-																							<option value="10:30">10:30 AM</option>
-																							<option value="10:45">10:45 AM</option>
-																							<option value="11:00">11:00 AM</option>
-																							<option value="11:15">11:15 AM</option>
-																							<option value="11:30">11:30 AM</option>
-																							<option value="11:45">11:45 AM</option>
-																							<option value="12:00">12:00 PM</option>
-																							<option value="12:15">12:15 PM</option>
-																							<option value="12:30">12:30 PM</option>
-																							<option value="12:45">12:45 PM</option>
-																							<option value="13:00">01:00 PM</option>
-																							<option value="13:15">01:15 PM</option>
-																							<option value="13:30">01:30 PM</option>
-																							<option value="13:45">01:45 PM</option>
-																							<option value="14:00">02:00 PM</option>
-																							<option value="14:15">02:15 PM</option>
-																							<option value="14:30">02:30 PM</option>
-																							<option value="14:45">02:45 PM</option>
-																							<option value="15:00">03:00 PM</option>
-																							<option value="15:15">03:15 PM</option>
-																							<option value="15:30">03:30 PM</option>
-																							<option value="15:45">03:45 PM</option>
-																							<option value="16:00">04:00 PM</option>
-																							<option value="16:15">04:15 PM</option>
-																							<option value="16:30">04:30 PM</option>
-																							<option value="16:45">04:45 PM</option>
-																							<option value="17:00">05:00 PM</option>
-																							<option value="17:15">05:15 PM</option>
-																							<option value="17:30">05:30 PM</option>
-																							<option value="17:45">05:45 PM</option>
-																							<option value="18:00">06:00 PM</option>
-																							<option value="18:15">06:15 PM</option>
-																							<option value="18:30">06:30 PM</option>
-																							<option value="18:45">06:45 PM</option>
-																							<option value="19:00">07:00 PM</option>
-																							<option value="19:15">07:15 PM</option>
-																							<option value="19:30">07:30 PM</option>
-																							<option value="19:45">07:45 PM</option>
-																							<option value="20:00">08:00 PM</option>
-																							<option value="20:15">08:15 PM</option>
-																							<option value="20:30">08:30 PM</option>
-																							<option value="20:45">08:45 PM</option>
-																							<option value="21:00">09:00 PM</option>
-																							<option value="21:15">09:15 PM</option>
-																							<option value="21:30">09:30 PM</option>
-																							<option value="21:45">09:45 PM</option>
-																							<option value="22:00">10:00 PM</option>
-																							<option value="22:15">10:15 PM</option>
-																							<option value="22:30">10:30 PM</option>
-																							<option value="22:45">10:45 PM</option>
-																							<option value="23:00">11:00 PM</option>
-																							<option value="23:15">11:15 PM</option>
-																							<option value="23:30">11:30 PM</option>
-																							<option value="23:45">11:45 PM</option>
-																						</select>
+																						
 																					</div>
 																				</div>
 																			</div>
@@ -624,19 +488,192 @@
 									</div>														   
 								</div>
 								<div class="step-footer step-tab-pager mt-4">
-									<button data-direction="prev" class="btn btn-default btn-hover steps_btn">Previous</button>
-									<button data-direction="next" class="btn btn-default btn-hover steps_btn">Next</button>
-									<button data-direction="finish" class="btn btn-default btn-hover steps_btn">Create</button>
+									<button type="button" data-direction="prev" class="btn btn-default btn-hover steps_btn">Previous</button>
+									<button type="button" id="next_step1" data-direction="next" class="btn btn-default btn-hover steps_btn" onclick="validateStep1()">Next</button>
+									<button type="submit" id="next_step2" data-direction="finish" data-url="{% url 'events:create-online-event' %}" class="btn btn-default btn-hover steps_btn complete" onclick="validateStep2()">Create</button>
 								</div>
 							</div>
 						</div> 
 					</div>
-
 				</div>
 			</div>
 		</div>
 	</div>
 	<!-- Body End-->
+	 <script>
+		// JavaScript function to validate the form fields for the first step
+		function validateStep1() {
+			var eventName = document.getElementById('event_name').value;
+			var categories = document.querySelector('.selectpicker').value;
+			var eventDate = document.getElementById('event_date').value;
+			var eventTime = document.getElementById('event_time').value;
+			var eventDuration = document.getElementById('event_duration').value;
+			var organizerName = document.getElementById('organizer_name').value;
+			var organizerEmail = document.getElementById('organizer_email').value;
+			var organizerPhone = document.getElementById('organizer_phone').value;
+			var eventUrl = document.getElementById('event_url').value;
+			var isValid = true;
+
+			document.getElementById('event_name_error').innerHTML = '';
+			document.getElementById('categories_error').innerHTML = '';
+			document.getElementById('event_date_error').innerHTML = '';
+			document.getElementById('event_time_error').innerHTML = '';
+			document.getElementById('event_duration_error').innerHTML = '';
+			document.getElementById('organizer_name_error').innerHTML = '';
+			document.getElementById('organizer_email_error').innerHTML = '';
+			document.getElementById('organizer_phone_error').innerHTML = '';
+			document.getElementById('event_url_error').innerHTML = '';
+
+			if (eventName.trim() === '') {
+				document.getElementById('event_name_error').innerHTML = 'Please enter event name.';
+				isValid = false;
+			}
+
+			if (categories.length === 0) {
+				document.getElementById('categories_error').innerHTML = 'Please select at least one category.';
+				isValid = false;
+			}
+
+			if (eventDate.trim() === '') {
+				document.getElementById('event_date_error').innerHTML = 'Please select event date.';
+				isValid = false;
+			}
+
+			if (eventTime.trim() === '') {
+				document.getElementById('event_time_error').innerHTML = 'Please select event time.';
+				isValid = false;
+			}
+
+			if (eventDuration.trim() === '') {
+				document.getElementById('event_duration_error').innerHTML = 'Please enter event duration.';
+				isValid = false;
+			}
+
+			if (organizerName.trim() === '') {
+				document.getElementById('organizer_name_error').innerHTML = 'Please enter organizer name.';
+				isValid = false;
+			}
+
+			if (organizerEmail.trim() === '') {
+				document.getElementById('organizer_email_error').innerHTML = 'Please enter organizer email.';
+				isValid = false;
+			} else if (!isValidEmail(organizerEmail)) {
+				document.getElementById('organizer_email_error').innerHTML = 'Please enter a valid email address.';
+				isValid = false;
+			}
+
+			if (organizerPhone.trim() === '') {
+				document.getElementById('organizer_phone_error').innerHTML = 'Please enter organizer phone number.';
+				isValid = false;
+			}
+
+			if (eventUrl.trim() === '') {
+				document.getElementById('event_url_error').innerHTML = 'Please enter event URL.';
+				isValid = false;
+			} else if (!isValidUrl(eventUrl)) {
+				document.getElementById('event_url_error').innerHTML = 'Please enter a valid URL.';
+				isValid = false;
+			}
+
+			return isValid;
+		}
+
+		function isValidEmail(email) {
+			var re = /\S+@\S+\.\S+/;
+			return re.test(email);
+		}
+
+		function isValidUrl(url) {
+			var re = /^(ftp|http|https):\/\/[^ "]+$/;
+			return re.test(url);
+		}
+
+		// Attach event listener to the "Next" button in the first step
+		document.getElementById('next_step1').addEventListener('click', function(event) {
+			if (!validateStep1()) {
+				event.preventDefault(); // Prevent moving to the next step if validation fails
+			}
+		});
+
+
+		// JavaScript function to validate the form fields for the second step
+		function validateStep2() {
+			var price = document.getElementById('id_price').value;
+			var quantity = document.getElementById('id_quantity').value;
+			var isValid = true;
+
+			// Reset validation classes and messages
+			document.getElementById('id_price').classList.remove('is-invalid');
+			document.getElementById('id_quantity').classList.remove('is-invalid');
+			document.getElementById('priceFeedback').innerHTML = '';
+			document.getElementById('quantityFeedback').innerHTML = '';
+
+			if (price.trim() === '') {
+				document.getElementById('id_price').classList.add('is-invalid');
+				document.getElementById('priceFeedback').innerHTML = 'Please enter ticket price.';
+				isValid = false;
+			} else if (isNaN(price)) {
+				document.getElementById('id_price').classList.add('is-invalid');
+				document.getElementById('priceFeedback').innerHTML = 'Ticket price must be a number.';
+				isValid = false;
+			}
+
+			if (quantity.trim() === '') {
+				document.getElementById('id_quantity').classList.add('is-invalid');
+				document.getElementById('quantityFeedback').innerHTML = 'Please enter total number of tickets available.';
+				isValid = false;
+			} else if (isNaN(quantity)) {
+				document.getElementById('id_quantity').classList.add('is-invalid');
+				document.getElementById('quantityFeedback').innerHTML = 'Total number of tickets must be a number.';
+				isValid = false;
+			}
+
+			return isValid;
+		}
+
+		// Attach event listener to the "Next" button in the second step
+		document.getElementById('next_step2').addEventListener('click', function(event) {
+			if (!validateStep2()) {
+				event.preventDefault(); // Prevent moving to the next step if validation fails
+			}
+		});
+	 </script>
+	 <script>
+		$('#add-event-tab').steps({
+			onFinish: function () {
+				// Validate form fields in step 1
+				if (!validateStep1()) {
+					return false; // Prevent form submission if validation fails
+				}
+
+				if (!validateStep2()) {
+					return false; // Prevent form submission if validation fails
+                }
+	
+				// Serialize form data
+				var formData = new FormData($('form')[0]);
+				var url = $('#next_step2').data('url');
+				// Submit form data via AJAX
+				$.ajax({
+					url: url,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function (response) {
+						// Handle success response
+						console.log(response);
+					},
+					error: function (xhr, status, error) {
+						// Handle error
+						console.error(xhr.responseText);
+					}
+				});
+	
+				return true; // Allow form submission
+			}
+		});
+	</script>
 	<!-- Footer Start-->
 	<footer class="footer mt-auto">
 		<div class="footer-top">
@@ -721,13 +758,7 @@
 	<script src="{% static 'js/i18n/datepicker.en.js' %}"></script>
 	<script src="{% static 'js/custom.js' %}"></script>
 	<script src="{% static 'js/night-mode.js' %}"></script>	
-	<script>
-		$('#add-event-tab').steps({
-		  onFinish: function () {
-			alert('Wizard Completed');
-		  }
-		});		
-	</script>
+	
 	<script>
 		ClassicEditor
 		.create( document.querySelector( '#event_description' ), {

@@ -64,16 +64,17 @@ class OnlineEvent(models.Model):
 
 
 class Ticket(models.Model):
-    event = models.ForeignKey('OnlineEvent', on_delete=models.CASCADE, related_name='tickets')
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    event = GenericForeignKey('content_type', 'object_id')
+
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField()
     sold_quantity = models.PositiveIntegerField(default=0)
     free = models.BooleanField(default=False)
-    early_bird = models.BooleanField(default=False)
-    early_bird_discount = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
-    discount_end_date = models.DateField(null=True, blank=True)
-    discount_end_time = models.TimeField(null=True, blank=True)
 
+    def __str__(self):
+        return f"Ticket for {self.event}"
 
 
 class Booking(models.Model):
