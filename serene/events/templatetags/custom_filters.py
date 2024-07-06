@@ -6,10 +6,10 @@ register = template.Library()
 def format_duration(value):
     try:
         # Convert datetime.timedelta to seconds
-        total_seconds = value.total_seconds()
-        hours, seconds = divmod(total_seconds, 3600)
-        minutes = seconds // 60
-        formatted_duration = f"{int(hours)}h {int(minutes)}m"
+        total_seconds = int(value.total_seconds())
+        hours, remainder = divmod(total_seconds, 3600)
+        minutes = remainder // 60
+        formatted_duration = f"{int(hours)}hrs {int(minutes)}min"
         return formatted_duration
     except (ValueError, TypeError):
         return value  # Return the original value if it cannot be converted

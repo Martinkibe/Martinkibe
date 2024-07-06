@@ -34,13 +34,18 @@ class VenueEvent(models.Model):
     venue_address = models.TextField()
     event_image = models.ImageField(upload_to='event_images/', blank=True, null=True)
 
+    # Ticket fields
+    ticket_price = models.DecimalField(max_digits=10, decimal_places=2, default=50)
+    ticket_quantity = models.PositiveIntegerField(default=10)
+    tickets_sold = models.PositiveIntegerField(default=0)
+    free_event = models.BooleanField(default=False)
+
     def __str__(self):
         return self.event_name
     
     @property
     def event_type(self):
         return "venue"
-
 
 class OnlineEvent(models.Model):
     event_name = models.CharField(max_length=200)
@@ -55,26 +60,18 @@ class OnlineEvent(models.Model):
     event_url = models.URLField()
     event_image = models.ImageField(upload_to='event_images/', blank=True, null=True)
 
+    # Ticket fields
+    ticket_price = models.DecimalField(max_digits=10, decimal_places=2, default=50)
+    ticket_quantity = models.PositiveIntegerField(default=10)
+    tickets_sold = models.PositiveIntegerField(default=0)
+    free_event = models.BooleanField(default=False)
+
     def __str__(self):
         return self.event_name
     
     @property
     def event_type(self):
         return "online"
-
-
-class Ticket(models.Model):
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    event = GenericForeignKey('content_type', 'object_id')
-
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    quantity = models.PositiveIntegerField()
-    sold_quantity = models.PositiveIntegerField(default=0)
-    free = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"Ticket for {self.event}"
 
 
 class Booking(models.Model):

@@ -12,8 +12,10 @@ urlpatterns = [
     #  event Detail
     path('online-event/<int:pk>/', views.online_event, name='online_event_detail'),
     path('venue-event/<int:pk>/', views.venue_event, name='venue_event_detail'),
-    # booking confirmed url
-    path('booking-confirmed/<int:event_id>/<str:event_type>/', views.booking_confirmed, name="booking-confirmed"),
+    # booking url
+    path('book_event/<int:event_id>/<str:event_type>/', views.book_event, name="book_event"),
+    # booking Confirmed url
+    path('booking_confirmation/', views.booking_confirmation, name="booking_confirmation"),
     # create
     path('create/', views.create, name="create"),
     # create online event url

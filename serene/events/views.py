@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
-from .forms import OnlineEventForm, VenueEventForm, EventSearchForm, TicketForm
+from .forms import OnlineEventForm, VenueEventForm, EventSearchForm
 from .models import Booking, VenueEvent, OnlineEvent, EventCategory
-from .threads import set_current_request
+from django.utils import timezone
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Q
 from django.urls import reverse
@@ -48,6 +49,13 @@ def all_events(request):
 
 def online_event(request, pk):
     event = get_object_or_404(OnlineEvent, id=pk)
+    # Check if the user has already booked this online event
+    event_already_booked = Booking.objects.filter(
+        user=request.user,
+        content_type=ContentType.objects.get_for_model(OnlineEvent),
+        object_id=event.id
+    ).exists()
+    
     # Fetch more events logic here, for example:
     more_events = OnlineEvent.objects.exclude(id=pk)[:5]
     # start date to initiate the count down
@@ -56,15 +64,23 @@ def online_event(request, pk):
         'event': event,
         'more_events': more_events,
         'event_start_date': event_start_date,
+        'event_already_booked': event_already_booked,
     }
     return render(request, 'online_event.html', context)
 
 def venue_event(request, pk):
     event = get_object_or_404(VenueEvent, id=pk)
+    # Check if the user has already booked this online event
+    event_already_booked = Booking.objects.filter(
+        user=request.user,
+        content_type=ContentType.objects.get_for_model(OnlineEvent),
+        object_id=event.id
+    ).exists()
+    
     more_events = VenueEvent.objects.exclude(id=pk)[:5]  # Exclude current event and limit to 5 more events
     # start date to initiate the count down
     event_start_date = event.event_date.timestamp()
-    return render(request, 'venue_event.html', {'event': event, 'more_events': more_events, 'event_start_date': event_start_date,})
+    return render(request, 'venue_event.html', {'event': event, 'more_events': more_events, 'event_start_date': event_start_date, 'event_already_booked': event_already_booked,})
 
 
 
@@ -108,56 +124,108 @@ def create(request):
 @user_passes_test(is_organizer)
 def create_online_event(request):
     if request.method == 'POST':
-        event_form = OnlineEventForm(request.POST, request.FILES)
-        ticket_form = TicketForm(request.POST)
-        if event_form.is_valid() and ticket_form.is_valid():
-            event = event_form.save()
-            ticket = ticket_form.save(commit=False)
-            ticket.content_type = ContentType.objects.get_for_model(event)
-            ticket.object_id = event.id
-            if request.POST.get('free_event_ticketing'):
-                ticket.price = 0
-                ticket.free = True
-            ticket.save()
-            return redirect('events:online_event', pk=event.pk)
+        form = OnlineEventForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                event = form.save()
+                messages.success(request, 'Online event created successfully!')
+                return redirect('events:online_event', pk=event.pk)
+            except Exception as e:
+                messages.error(request, f'Error creating event: {e}')
+                print(f'Error creating event: {e}')
+        else:
+            messages.error(request, 'There was an error with the form. Please correct the errors below.')
     else:
         form = OnlineEventForm()
-        ticket_form = TicketForm()
-    return render(request, 'template.html', {'form': form, 'ticket_form': ticket_form})
+
+    return render(request, 'create_online_event.html', {'form': form})
 
 @login_required
 @user_passes_test(is_organizer)
 def create_venue_event(request):
     if request.method == 'POST':
-        event_form = VenueEventForm(request.POST, request.FILES)
-        ticket_form = TicketForm(request.POST)
-        if event_form.is_valid() and ticket_form.is_valid():
-            event = event_form.save()
-            ticket = ticket_form.save(commit=False)
-            ticket.content_type = ContentType.objects.get_for_model(event)
-            ticket.object_id = event.id
-            if request.POST.get('free_event_ticketing'):
-                ticket.price = 0
-                ticket.free = True
-            ticket.save()
-            return redirect('events:venue_event', pk=event.pk)
+        form = VenueEventForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                event = form.save()
+                messages.success(request, 'Venue event created successfully!')
+                return redirect('events:venue_event', pk=event.pk)
+            except Exception as e:
+                messages.error(request, f'Error creating event: {e}')
+        else:
+            messages.error(request, 'There was an error with the form. Please correct the errors below.')
     else:
         form = VenueEventForm()
-        ticket_form = TicketForm()
-    return render(request, 'template.html', {'form': form, 'ticket_form': ticket_form})
 
-def booking_confirmed(request, event_id, event_type):
-    if event_type == 'Venue':
-        event = get_object_or_404(VenueEvent, id=event_id)
-    elif event_type == 'Online':
-        event = get_object_or_404(OnlineEvent, id=event_id)
+    return render(request, 'create_venue_event.html', {'form': form})
+
+@login_required
+def book_event(request, event_type, event_id):
+    # Determine the event model based on event_type
+    if event_type == 'venue':
+        event_model = VenueEvent
+    elif event_type == 'online':
+        event_model = OnlineEvent
     else:
-        # Handle unknown event types
-        event = None
-
-    if event:
-        is_booked = Booking.objects.filter(event_type=event_type, event_id=event_id).exists()
+        # Handle invalid event_type (optional)
+        return redirect('home')  # Redirect to home or an error page
+    
+    # Retrieve the event instance
+    event_instance = get_object_or_404(event_model, id=event_id)
+    
+    # Get the content type for the event model
+    content_type = ContentType.objects.get_for_model(event_model)
+    
+    # Check if a booking already exists for this event and user
+    existing_booking = Booking.objects.filter(
+        user=request.user,
+        content_type=content_type,
+        object_id=event_instance.id
+    ).exists()
+    
+    if existing_booking:
+        # Handle case where booking already exists (optional)
+        messages.error(request, 'You have already booked this event.')
+        return redirect('events:events')
+    
+    # Create the Booking instance using signal
+    booking = Booking.objects.create(
+        user=request.user,
+        booking_date=timezone.now(),  # Example: Use current time as booking date
+        content_type=content_type,
+        object_id=event_instance.id
+    )
+    
+    # Redirect to a booking confirmation page with event details
+    if event_type == 'venue':
+        event_name = event_instance.event_name  # Adjust this based on your VenueEvent model
+        event_date = event_instance.event_date.strftime('%a, %b %d, %Y at %I:%M %p')  # Example formatting
+        event_location = event_instance.event_location 
+        event_image = event_instance.event_image.url  # Assuming event_image is an ImageField in VenueEvent
+        ticket_price = event_instance.ticket_price
+        return redirect(reverse('events:booking_confirmation') + f'?event_name={event_name}&event_date={event_date}&location={event_location}&event_image={event_image}&ticket_price={ticket_price}')
+    elif event_type == 'online':
+        event_name = event_instance.event_name  # Adjust this based on your OnlineEvent model
+        event_date = event_instance.event_date.strftime('%a, %b %d, %Y at %I:%M %p')  # Example formatting
+        online_location = event_instance.event_url  # Assuming event_url is a field in OnlineEvent model
+        event_image = event_instance.event_image.url  # Assuming event_image is an ImageField in OnlineEvent
+        ticket_price = event_instance.ticket_price
+        return redirect(reverse('events:booking_confirmation') + f'?event_name={event_name}&event_date={event_date}&location={online_location}&event_image={event_image}&ticket_price={ticket_price}')
     else:
-        is_booked = False
+        return redirect('events:events')  # Handle invalid event_type
 
-    return render(request, 'booking_confirmed.html', {'event': event, 'is_booked': is_booked})
+def booking_confirmation(request):
+    event_name = request.GET.get('event_name')
+    event_date = request.GET.get('event_date')
+    location = request.GET.get('location')
+    event_image = request.GET.get('event_image')  # Get event image URL
+    ticket_price = request.GET.get('ticket_price')  # Get ticket price
+    context = {
+        'event_name': event_name,
+        'event_date': event_date,
+        'location': location,
+        'event_image': event_image,
+        'ticket_price': ticket_price,
+    }
+    
+    return render(request, 'booking_confirmed.html', context)

@@ -80,12 +80,15 @@
                                 <div class="form-group">
                                     <label for="event_duration">Event Duration</label>
                                     <input type="text" class="form-control" id="event_duration" name="event_duration"
-                                        value="{{ form.event_duration.value|default_if_none:'' }}" required
-                                        pattern="\d{2}:\d{2}" title="Please enter a duration in the format HH:MM">
+                                           value="{{ form.event_duration.value|default_if_none:'' }}" required
+                                           pattern="\d+ days \d{1,2}:\d{2}" title="Please enter duration in the format X days HH:MM">
+                                    <small class="form-text text-muted">
+                                        Enter the duration in hours, and minutes (e.g.,03hrs:30min).
+                                    </small>
                                     {% for error in form.event_duration.errors %}
                                     <div class="invalid-feedback">{{ error }}</div>
                                     {% endfor %}
-                                </div>
+                                </div>                                
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -146,13 +149,13 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var currentDate = new Date();
-        currentDate.setDate(currentDate.getDate() + 2); // Add 1 day to get the next day
+        currentDate.setDate(currentDate.getDate() + 1); // Add 1 day to get the next day
         var minDate = currentDate.toISOString().split('T')[0]; // Format as yyyy-mm-dd
         document.getElementById('event_date').min = minDate;
 
         var eventDurationInput = document.getElementById('event_duration');
         var eventDurationMask = new IMask(eventDurationInput, {
-            mask: 'HH:MM',
+            mask: '{HH} hrs:{MM} min',
             blocks: {
                 HH: {
                     mask: IMask.MaskedRange,
@@ -166,7 +169,11 @@
                     to: 59,
                     maxLength: 2
                 }
-            }
+            },
+            // Ensure validation happens on each input
+            lazy: false,
+            // Use space as a placeholder character for clarity
+            placeholderChar: '_'
         });
     });
 </script>

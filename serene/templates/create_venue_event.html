@@ -77,15 +77,16 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="event_duration">Event Duration</label>
-                                    <input type="text"
-                                        class="form-control{% if form.event_duration.errors %} is-invalid{% endif %}"
-                                        id="event_duration" name="event_duration"
-                                        value="{{ form.event_duration.value|default_if_none:'' }}" required
-                                        pattern="\d{2}:\d{2}" title="Please enter a duration in the format HH:MM">
+                                    <input type="text" class="form-control" id="event_duration" name="event_duration"
+                                           value="{{ form.event_duration.value|default_if_none:'' }}" required
+                                           pattern="\d+ days \d{1,2}:\d{2}" title="Please enter duration in the format X days HH:MM">
+                                    <small class="form-text text-muted">
+                                        Enter the duration in days, hours, and minutes (e.g., 2 days 03:30).
+                                    </small>
                                     {% for error in form.event_duration.errors %}
                                     <div class="invalid-feedback">{{ error }}</div>
                                     {% endfor %}
-                                </div>
+                                </div>                                
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -178,8 +179,14 @@
 
         var eventDurationInput = document.getElementById('event_duration');
         var eventDurationMask = new IMask(eventDurationInput, {
-            mask: 'HH:MM',
+            mask: '{d} days {HH}:{MM}',
             blocks: {
+                d: {
+                    mask: IMask.MaskedRange,
+                    from: 0,
+                    to: 999,
+                    maxLength: 3
+                },
                 HH: {
                     mask: IMask.MaskedRange,
                     from: 0,
@@ -192,8 +199,10 @@
                     to: 59,
                     maxLength: 2
                 }
-            }
+            },
+            lazy: false  // Ensure validation happens on each input
         });
+
     });
 </script>
 {% endblock %}

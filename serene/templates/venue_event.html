@@ -124,7 +124,7 @@
                     <div class="select-tickets-block">
                         <h6>Select Tickets</h6>
                         <div class="select-ticket-action">
-                            <div class="ticket-price">{{ event.price }}Free*</div>
+                            <div class="ticket-price">{{ event.ticket_price }}</div>
                             <div class="quantity">
                                 <div class="counter">
                                     <span class="down" onClick='decreaseCount(event, this)'>-</span>
@@ -136,12 +136,15 @@
                         <p>{{ event.ticket_details }}</p>
                         <div class="xtotel-tickets-count">
                             <div class="x-title">1x Ticket(s)</div>
-                            <h4>{{ event.price }}Free*</h4>
+                            <h4>{{ event.ticket_price }}</h4>
                         </div>
                     </div>
                     <div class="booking-btn">
-						<a href="#" class="main-btn btn-hover w-100">Book Now</a>
-                        <!-- <a href="#" class="main-btn btn-hover w-100">Book Now</a> -->
+                        {% if event_already_booked %}
+                            <span class="main-btn btn-hover w-100 disabled">Already Booked</span>
+                        {% else %}
+                            <a href="{% url 'events:book_event' event_type='venue' event_id=event.id %}" class="main-btn btn-hover w-100">Book Now</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -191,37 +194,52 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Get the event start date from the hidden element
-        var eventStartDateStr = document.getElementById('eventStartDate').textContent;
-        var eventStartDate = new Date(eventStartDateStr).getTime();
-        // Update the countdown every 1 second
-        var x = setInterval(function() {
+    // Get the event start date from the hidden element
+    var eventStartDateStr = document.getElementById('eventStartDate').textContent;
+    var eventStartDate = new Date(eventStartDateStr).getTime();
+    var eventEndDate = eventStartDate + 24 * 60 * 60 * 1000; // Add 24 hours to the start date
 
-            // Get the current date and time
-            var now = new Date().getTime();
+    // Select the button element
+    var bookingBtn = document.querySelector('.booking-btn .main-btn');
 
-            // Calculate the distance between now and the event start date
-            var distance = eventStartDate - now;
+    // Update the countdown every 1 second
+    var x = setInterval(function() {
+        // Get the current date and time
+        var now = new Date().getTime();
 
-            // Calculate days, hours, minutes, and seconds
-            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        // Calculate the distance between now and the event start date
+        var distanceToStart = eventStartDate - now;
+        var distanceToEnd = eventEndDate - now;
 
-            // Display the countdown
-            document.getElementById("day").innerHTML = days;
-            document.getElementById("hour").innerHTML = hours;
-            document.getElementById("minute").innerHTML = minutes;
-            document.getElementById("second").innerHTML = seconds;
+        // Calculate days, hours, minutes, and seconds
+        var days = Math.floor(distanceToStart / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distanceToStart % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distanceToStart % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distanceToStart % (1000 * 60)) / 1000);
 
-            // If the countdown is over, display a message
-            if (distance < 0) {
-                clearInterval(x);
-                document.getElementById("countdown").innerHTML = "Event has started.";
-            }
-        }, 1000); // Update every 1 second
-    });
+        // Display the countdown
+        document.getElementById("day").innerHTML = days;
+        document.getElementById("hour").innerHTML = hours;
+        document.getElementById("minute").innerHTML = minutes;
+        document.getElementById("second").innerHTML = seconds;
+
+        // If the event has started but not ended, display "Event has started."
+        if (distanceToStart < 0 && distanceToEnd >= 0) {
+            document.getElementById("countdown").innerHTML = "Event Has Started.";
+            bookingBtn.innerHTML = "Join";
+            bookingBtn.classList.remove('disabled');
+            bookingBtn.setAttribute('href', '#');
+        } 
+        // If the event has ended, display "Event ended."
+        else if (distanceToEnd < 0) {
+            bookingBtn.innerHTML = "Ended";
+            bookingBtn.classList.add('disabled');
+            bookingBtn.removeAttribute('href');
+            clearInterval(x);
+            document.getElementById("countdown").innerHTML = "Event Has Ended.";
+        }
+    }, 1000); // Update every 1 second
+});
 </script>
 
 {% endblock content %}
