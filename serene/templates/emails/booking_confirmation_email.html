@@ -6,151 +6,160 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, shrink-to-fit=9">
     <title>Serene - Invoice for {{ user.username }}</title>
-    
-    <!-- Favicon Icon -->
-    <link rel="icon" type="image/png" href="{% static 'images/fav.png' %}">
-    
-    <!-- Stylesheets -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-    <link href="{% static 'vendor/unicons-2.0.1/css/unicons.css' %}" rel='stylesheet'>
-    <link href="{% static 'css/style.css' %}" rel="stylesheet">
-    <link href="{% static 'css/responsive.css' %}" rel="stylesheet">
-    <link href="{% static 'css/night-mode.css' %}" rel="stylesheet">
-    
-    <!-- Vendor Stylesheets -->
-    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
-    <link href="{% static 'vendor/OwlCarousel/assets/owl.carousel.css' %}" rel="stylesheet">
-    <link href="{% static 'vendor/OwlCarousel/assets/owl.theme.default.min.css' %}" rel="stylesheet">
-    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'vendor/bootstrap-select/dist/css/bootstrap-select.min.css' %}" rel="stylesheet">        
-        
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header, .footer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .details ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .details li {
+            margin-bottom: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #eaeaea;
+            text-align: left;
+        }
+        thead tr {
+            background-color: green;
+            color: #fff;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .footer .total {
+            margin-bottom: 8px;
+        }
+        .event-details {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .event-details img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .event-info {
+            padding-left: 20px;
+        }
+        .event-info h5 {
+            margin: 0;
+            margin-bottom: 8px;
+        }
+        .event-info p {
+            margin: 0;
+            margin-bottom: 8px;
+        }
+    </style>
 </head>
+<body>
 
-<body class="d-flex flex-column h-100">
-    <!-- Invoice Start-->
-    <div class="invoice clearfix">
-        <div class="container">
-            <div class="row justify-content-md-center">
-                <div class="col-lg-8 col-md-10">
-                    <div class="invoice-body">
-                        <div class="invoice_dts">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h2 class="invoice_title">Invoice</h2>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="vhls140">
-                                        <ul>
-                                            <li><div class="vdt-list">Invoice to {{ user.get_full_name }}</div></li>
-                                            <li><div class="vdt-list">140 St Kilda Rd</div></li>
-                                            <li><div class="vdt-list">Melbourne, Victoria</div></li>
-                                            <li><div class="vdt-list">3000, Australia</div></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="vhls140">
-                                        <ul>
-                                            <li><div class="vdt-list">Invoice ID : {{ event.id }}</div></li>
-                                            <li><div class="vdt-list">Order Date : {{ booking_date}}</div></li>
-                                            <li><div class="vdt-list">Near MBD Mall,</div></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="main-table bt_40">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead class="thead-dark">
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Event Details</th>
-                                            <th scope="col">Type</th>
-                                            <th scope="col">Qty</th>
-                                            <th scope="col">Unit Price</th>
-                                            <th scope="col">Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>                                        
-                                            <td>1</td>    
-                                            <td><a href="#" target="_blank">{{ event.event_name }}</a></td>    
-                                            <td>{{ event.event_type }}</td>    
-                                            <td>1</td>
-                                            <td>${{ event.ticket_price }}</td>
-                                            <td>${{ event.ticket_price }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="1"></td>
-                                            <td colspan="5">
-                                                <div class="user_dt_trans text-end pe-xl-4">
-                                                    <div class="totalinv2">Invoice Total : KES ${{ event.price }}</div>
-                                                    <p>Paid via Paypal</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>                                    
-                                </table>
-                            </div>
-                        </div>
-                        <div class="invoice_footer">
-                            <div class="cut-line">
-                                <i class="fa-solid fa-scissors"></i>
-                            </div>
-                            <div class="main-card">
-                                <div class="row g-0">
-                                    <div class="col-lg-7">
-                                        <div class="event-order-dt p-4">
-                                            <div class="event-thumbnail-img">
-                                                <img src="{{ event.event_image.url }}" alt="{{ event.event_name }}">
-                                            </div>
-                                            <div class="event-order-dt-content">
-                                                <h5>{{ event.event_name|capfirst }}</h5>
-                                                <span>{{ event.event_date|date:"D, M d, Y" }} {{ event.event_time }}</span>
-                                                <div class="buyer-name">{{ user.username }}: {{user.email}}</div>
-                                                <div class="booking-total-tickets">
-                                                    <i class="fa-solid fa-ticket rotate-icon"></i>
-                                                    <span class="booking-count-tickets mx-2">1</span>x Ticket
-                                                </div>
-                                                <div class="booking-total-grand">
-                                                    Total : <span>KSH {{ event.ticket_price }}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-5">
-                                        <div class="QR-dt p-4">
-                                            <ul class="QR-counter-type">
-                                                <li>{{ event.event_type }}</li>
-                                                <li>Counter</li>
-                                                <li>{{ event.id|floatformat:2 }}</li>
-                                            </ul>
-                                            <!-- QR code image generation can be added here if needed -->
-                                            <p>Powered by Serene</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="cut-line">
-                                <i class="fa-solid fa-scissors"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Invoice Start -->
+    <div class="container">
+        <div class="header">
+            <h2>Invoice</h2>
+        </div>
+
+        <div class="details">
+            <div>
+                <ul>
+                    <li>Invoice to: <strong>{{ user.username|capfirst }}</strong></li>
+                    <li>140 St Kilda Rd</li>
+                    <li>Melbourne, Victoria</li>
+                    <li>3000, Australia</li>
+                </ul>
+            </div>
+            <div>
+                <ul>
+                    <li>Invoice ID: <strong>{{ event.id }}</strong></li>
+                    <li>Order Date: <strong>{{ booking_date }}</strong></li>
+                    <li>{{ event.event_location|capfirst }}</li>
+                </ul>
             </div>
         </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Event Details</th>
+                    <th>Type</th>
+                    <th>Qty</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><a href="#" target="_blank">{{ event.event_name }}</a></td>
+                    <td>{{ event.event_type|capfirst }}</td>
+                    <td>1</td>
+                    <td>KES {{ event.ticket_price }}</td>
+                    <td>KES {{ event.ticket_price }}</td>
+                </tr>
+                <tr>
+                    <td colspan="4"></td>
+                    <td colspan="2" style="text-align: right;">
+                        <div class="total">Invoice Total: <strong>KES {{ event.ticket_price }}</strong></div>
+                        <p>Paid via Paypal</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <div class="event-details">
+                <div>
+                    <img src="{% static event.event_image.url %}" alt="{{ event.event_name }}">
+                </div>
+                <div class="event-info">
+                    <h5>{{ event.event_name|capfirst }}</h5>
+                    <p>{{ event.event_date|date:"D, M d, Y" }} {{ event.event_time }}</p>
+                    <p>{{ user.username|capfirst }}: {{ user.email|capfirst }}</p>
+                    <p><i class="fa-solid fa-ticket"></i> 1 x Ticket</p>
+                    <p>Total: <strong>KSH {{ event.ticket_price }}</strong></p>
+                </div>
+            </div>
+            <p>Powered by Serene</p>
+        </div>
     </div>
-    <!-- Invoice End-->
-    
-    
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'vendor/OwlCarousel/owl.carousel.js' %}"></script>
-    <script src="{% static 'vendor/bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>    
-    <script src="{% static 'js/custom.js' %}"></script>
-    <script src="{% static 'js/night-mode.js' %}"></script>
+    <!-- Invoice End -->
+
 </body>
 </html>
